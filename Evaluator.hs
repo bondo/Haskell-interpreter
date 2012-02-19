@@ -70,8 +70,7 @@ instantiate (ECase e alts) heap env =
 instantiateConstr tag arity heap env =
     error "can't instantiate constructors yet"
 
-instantiateLet isRec defs body heap env = instantiate body heap' env'
-    where (heap', env') = foldl' defFolder (heap, []) defs
-          defFolder (h, e) (name, exp) = (h', (name, addr):e)
-              where (h', addr) = instantiate exp h env_to_use
-                    env_to_use = if isRec then e else env
+instantiateLet isrec defs body heap env = instantiate body heap' env'
+    where (heap', env') = foldl' defFolder (heap, env) defs
+          defFolder (fheap, fenv) (name, exp) = (fheap', (name, addr):fenv)
+              where (fheap', addr) = instantiate exp fheap $ if isrec then env' else fenv

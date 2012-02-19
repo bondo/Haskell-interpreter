@@ -19,16 +19,19 @@ testProgram2 = "f = 3 ;\n\
 testProgram3 = "main = S K K 3" -- main = 3
 
 testProgram4 = "\
-\pair x y f = f x y ; \
-\fst p = p K ; \
-\snd p = p K1 ; \
-\f x y = letrec \
-\            a = pair x b ; \
-\            b = pair y a \
-\        in \
-\        fst (snd (snd (snd a))) ; \
+\pair x y f = f x y ; \n\
+\fst p = p K ; \n\
+\snd p = p K1 ; \n\
+\f x y = let rec \n\
+\            a = pair x b ; \n\
+\            b = pair y a \n\
+\        in \n\
+\        fst (snd (snd (snd a))) ; \n\
 \main = f 3 4" -- main = 4
 
+testProgram5 = "main = let rec a = 101 in 42"
+
+testProgram6 = "f x = x ; main = let a = 42 in f a"
 
 testChurch = "succ = S (S (K S) K) ; \
              \add  = S I (K (S ((S (K S)) K))) ; \

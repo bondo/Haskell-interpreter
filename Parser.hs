@@ -71,8 +71,8 @@ pNum = liftM ENum int
        <?> "Number"
 
 pLet :: Parser CoreExp
-pLet = do isRec <- (reserved "let"    >> return False)
-               <|> (reserved "letrec" >> return True)
+pLet = do reserved "let"
+          isRec <- try (reserved "rec" >> return True) <|> return False
           defs <- pDefs
           reserved "in"
           exp <- pExp
@@ -84,10 +84,10 @@ pDefs = sepBy1 pDef semi
         <?> "List of bindings"
 
 pDef :: Parser (Name, CoreExp)
-pDef = try (do var <- identifier
-               reservedOp "="
-               exp <- pExp
-               return (var, exp))
+pDef = do var <- identifier
+          reservedOp "="
+          exp <- pExp
+          return (var, exp)
        <?> "Let(rec) binding"
 
 pCase :: Parser CoreExp
