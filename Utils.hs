@@ -1,7 +1,5 @@
 module Utils where
 
-import Data.List (intercalate)
-
 import Language
 import Heap
 
