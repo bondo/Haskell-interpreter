@@ -22,7 +22,7 @@ semi       = P.semi haskell
 comma      = P.comma haskell
              
 int :: Parser Int
-int = integer >>= return . fromInteger
+int = liftM fromInteger integer
 
 parseCore :: String -> Either ParseError CoreProgram
 parseCore = runParser pProgram () "filename.nice"
@@ -59,15 +59,15 @@ pAExp =  pVar
      <?> "(A)Expression"
 
 pApp :: Parser CoreExp
-pApp = (many1 pAExp >>= return . foldl1 EAp)
+pApp = liftM (foldl1 EAp) (many1 pAExp)
        <?> "Application"
 
 pVar :: Parser CoreExp
-pVar = (identifier >>= return . EVar)
+pVar = liftM EVar identifier
        <?> "Variabel"
 
 pNum :: Parser CoreExp
-pNum = (int >>= return . ENum)
+pNum = liftM ENum int
        <?> "Number"
 
 pLet :: Parser CoreExp
