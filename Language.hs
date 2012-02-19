@@ -37,8 +37,8 @@ isAtomicExp (ENum n) = True
 isAtomicExp _        = False
 
 preludeDefs :: CoreProgram
-preludeDefs
-  = [ ("I", ["x"], EVar "x"),
+preludeDefs =
+    [ ("I", ["x"], EVar "x"),
       ("K", ["x","y"], EVar "x"),
       ("K1",["x","y"], EVar "y"),
       ("S", ["f","g","x"], EAp (EAp (EVar "f") (EVar "x"))

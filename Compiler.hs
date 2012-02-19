@@ -12,7 +12,7 @@ compile prog = (init_stack, initialTiDump, init_heap, globals, tiStatInitial)
     where sc_defs = prog ++ preludeDefs ++ extraPreludeDefs
           (init_heap, globals) = buildInitialHeap sc_defs
           init_stack = [address_of_main]
-          address_of_main = aLookup globals "main" (error no_main)
+          address_of_main = aLookup globals "main" $ error no_main
           no_main = "main is not defined"
 
 buildInitialHeap :: [CoreScDef] -> (TiHeap, TiGlobals)
@@ -20,4 +20,4 @@ buildInitialHeap = mapAccumL allocateSc hInitial
 
 allocateSc :: TiHeap -> CoreScDef -> (TiHeap, (Name, Addr))
 allocateSc heap (name, args, body) = (heap', (name, addr))
-    where (heap', addr) = hAlloc heap (NSupercomb name args body)
+    where (heap', addr) = hAlloc heap $ NSupercomb name args body

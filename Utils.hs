@@ -43,14 +43,14 @@ showStack :: TiHeap -> TiStack -> String
 showStack heap stack = "Stk [" ++ pretty_stack ++ "]"
     where pretty_stack = concatMap show_stack_item stack
           show_stack_item addr = "\n\t" ++ show addr ++ ": " ++ node addr
-          node addr = showStkNode heap (hLookup heap addr)
+          node addr = showStkNode heap $ hLookup heap addr
 
 showStkNode :: TiHeap -> Node -> String
 showStkNode heap (NAp fun_addr arg_addr) =
     "NAp " ++ fun ++ " " ++ arg ++ " (" ++ node ++ ")"
     where fun  = show fun_addr
           arg  = show arg_addr
-          node = showNode (hLookup heap arg_addr)
+          node = showNode $ hLookup heap arg_addr
 showStkNode _ node = showNode node
 
 showNode :: Node -> String

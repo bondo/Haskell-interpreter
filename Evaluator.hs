@@ -17,7 +17,7 @@ doAdmin :: TiState -> TiState
 doAdmin = applyToStats tiStatIncSteps
 
 tiFinal :: TiState -> Bool
-tiFinal ([sole_addr], _, heap, _, _) = isDataNode (hLookup heap sole_addr)
+tiFinal ([sole_addr], _, heap, _, _) = isDataNode $ hLookup heap sole_addr
 tiFinal ([], _, _, _, _)             = error "empty stack!"
 tiFinal _                            = False
 
@@ -43,7 +43,7 @@ scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
     where new_stack = result_addr : drop (length arg_names + 1) stack
           (new_heap, result_addr) = instantiate body heap env
           env = arg_bindings ++ globals
-          arg_bindings = zip arg_names (getargs heap stack)
+          arg_bindings = zip arg_names $ getargs heap stack
 
 getargs :: TiHeap -> TiStack -> [Addr]
 getargs heap (sc:stack) = map get_arg stack
@@ -54,11 +54,11 @@ instantiate :: CoreExp        -- Body of supercombinator
             -> [(Name, Addr)] -- Assosiation of names to addresses
             -> (TiHeap, Addr) -- Heap after instantiation, and address
                               --   of root of instance
-instantiate (ENum n)    heap env = hAlloc heap (NNum n)
-instantiate (EAp e1 e2) heap env = hAlloc heap'' (NAp a1 a2)
+instantiate (ENum n)    heap env = hAlloc heap $ NNum n
+instantiate (EAp e1 e2) heap env = hAlloc heap'' $ NAp a1 a2
     where (heap', a1)  = instantiate e1 heap env
           (heap'', a2) = instantiate e2 heap' env
-instantiate (EVar v) heap env = (heap, aLookup env v (error msg))
+instantiate (EVar v) heap env = (heap, aLookup env v $ error msg)
     where msg = "Undefined name " ++ show v
 instantiate (EConstr tag arity) heap env =
     instantiateConstr tag arity heap env
