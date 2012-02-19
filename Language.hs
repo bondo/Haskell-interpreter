@@ -7,10 +7,10 @@ data Exp a = EVar a              -- Variables
            | ELet {              -- Let(rec) expressions
                letIsRec :: Bool
              , letDefs  :: [(a, Exp a)]
-             , letBody  :: (Exp a)
+             , letBody  :: Exp a
              }
            | ECase {             -- Case expression
-               caseExp   :: (Exp a)
+               caseExp   :: Exp a
              , caseAlts  :: [Alter a]
              }
            | ELam [a] (Exp a)    -- Lambda abstraction

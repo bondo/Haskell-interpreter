@@ -29,7 +29,7 @@ applyToStats f (s, d, h, g, st) = (s, d, h, g, f st)
 initialTiDump = DummyTiDump
 
 showResults :: [TiState] -> String
-showResults states = concat (map showState states) ++ showStats (last states)
+showResults states = concatMap showState states ++ showStats (last states)
 
 showResult :: [TiState] -> String
 showResult states = res ++ showStats last_state
@@ -43,7 +43,7 @@ showState (stack, dump, heap, globals, stats) =
 showStack :: TiHeap -> TiStack -> String
 showStack heap stack = "Stk [" ++ pretty_stack ++ "]"
     where
-      pretty_stack = concat $ map show_stack_item stack
+      pretty_stack = concatMap show_stack_item stack
       show_stack_item addr = "\n\t" ++ show addr ++ ": " ++
                              showStkNode heap (hLookup heap addr)
 

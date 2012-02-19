@@ -18,7 +18,7 @@ compile program =
       no_main = "main is not defined"
 
 buildInitialHeap :: [CoreScDef] -> (TiHeap, TiGlobals)
-buildInitialHeap sc_defs = mapAccumL allocateSc hInitial sc_defs
+buildInitialHeap = mapAccumL allocateSc hInitial
 
 allocateSc :: TiHeap -> CoreScDef -> (TiHeap, (Name, Addr))
 allocateSc heap (name, args, body) = (heap', (name, addr))

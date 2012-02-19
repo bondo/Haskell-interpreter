@@ -14,7 +14,7 @@ eval state = state : rest_states
           next_state  = doAdmin (step state)
 
 doAdmin :: TiState -> TiState
-doAdmin state = applyToStats tiStatIncSteps state
+doAdmin = applyToStats tiStatIncSteps
 
 tiFinal :: TiState -> Bool
 tiFinal ([sole_addr], _, heap, _, _) =
@@ -41,7 +41,7 @@ apStep (s, d, h, g, st) a1 a2 = (a1 : s, d, h, g, st)
 scStep :: TiState -> Name -> [Name] -> CoreExp -> TiState
 scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
     (new_stack, dump, new_heap, globals, stats)
-    where new_stack = result_addr : (drop (length arg_names + 1) stack)
+    where new_stack = result_addr : drop (length arg_names + 1) stack
           (new_heap, result_addr) = instantiate body heap env
           env = arg_bindings ++ globals
           arg_bindings = zip arg_names (getargs heap stack)

@@ -8,7 +8,7 @@ hInitial :: Heap a
 hInitial = (0, map Addr [1..], [])
 
 hAlloc :: Heap a -> a -> (Heap a, Addr)
-hAlloc (size, (next:free), cts) n = ((size+1, free,(next,n) : cts),next)
+hAlloc (size, next : free, cts) n = ((size+1, free, (next,n) : cts), next)
 
 hUpdate :: Heap a -> Addr -> a -> Heap a
 hUpdate (size, free, cts) a n = (size, free, (a,n) : remove cts a)

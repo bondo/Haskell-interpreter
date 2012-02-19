@@ -35,7 +35,7 @@ instance Pretty a => Pretty (a, Exp a) where
     pretty (name, expr) =
         pretty name <+> equals <+> pretty expr
 
-instance Pretty a => Pretty [(Alter a)] where
+instance Pretty a => Pretty [Alter a] where
     pretty alts = hsep . punctuate semi $ map pretty alts
 
 instance Pretty a => Pretty (Alter a) where
