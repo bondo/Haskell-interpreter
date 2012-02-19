@@ -18,7 +18,7 @@ hFree (size, free, cts) a = (size-1, a:free, remove cts a)
 
 hLookup :: Heap a -> Addr -> a
 hLookup (size,free,cts) a = aLookup cts a (error msg)
-    where msg = "con't find node " ++ show a ++ " in heap"
+    where msg = "can't find node " ++ show a ++ " in heap"
 
 hAddresses :: Heap a -> [Addr]
 hAddresses (size,free,cts) = map fst cts 
@@ -34,5 +34,4 @@ hIsnull (Addr a) = a == 0
 
 newtype Addr = Addr Int deriving (Eq)
 
-instance Show Addr where
-    show (Addr a) = '#' : show a
+instance Show Addr where show (Addr a) = '#' : show a

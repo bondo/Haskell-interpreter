@@ -17,17 +17,16 @@ doAdmin :: TiState -> TiState
 doAdmin = applyToStats tiStatIncSteps
 
 tiFinal :: TiState -> Bool
-tiFinal ([sole_addr], _, heap, _, _) =
-    isDataNode (hLookup heap sole_addr)
-tiFinal ([], _, _, _, _) = error "empty stack!"
-tiFinal _                = False
+tiFinal ([sole_addr], _, heap, _, _) = isDataNode (hLookup heap sole_addr)
+tiFinal ([], _, _, _, _)             = error "empty stack!"
+tiFinal _                            = False
 
 isDataNode :: Node -> Bool
 isDataNode (NNum _) = True
 isDataNode _        = False
 
 step :: TiState -> TiState
-step state@(stack, _, heap, _, _) = dispatch (hLookup heap (head stack))
+step state@(stack, _, heap, _, _) = dispatch $ hLookup heap $ head stack
     where dispatch (NNum n)                  = numStep state n
           dispatch (NAp a1 a2)               = apStep state a1 a2
           dispatch (NSupercomb sc args body) = scStep state sc args body
@@ -47,8 +46,7 @@ scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
           arg_bindings = zip arg_names (getargs heap stack)
 
 getargs :: TiHeap -> TiStack -> [Addr]
-getargs heap (sc:stack) =
-    map get_arg stack
+getargs heap (sc:stack) = map get_arg stack
     where get_arg addr  = arg where (NAp fun arg) = hLookup heap addr
 
 instantiate :: CoreExp        -- Body of supercombinator

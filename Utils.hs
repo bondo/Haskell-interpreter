@@ -16,11 +16,11 @@ data Node = NAp Addr Addr
 type TiGlobals = [(Name, Addr)]
 
 type TiStats = Int
-tiStatInitial    :: TiStats
-tiStatInitial    = 0
-tiStatIncSteps   :: TiStats -> TiStats
+tiStatInitial :: TiStats
+tiStatInitial = 0
+tiStatIncSteps :: TiStats -> TiStats
 tiStatIncSteps s = s + 1
-tiStatGetSteps   :: TiStats -> Int
+tiStatGetSteps :: TiStats -> Int
 tiStatGetSteps s = s
 
 applyToStats :: (TiStats -> TiStats) -> TiState -> TiState
@@ -37,15 +37,13 @@ showResult states = res ++ showStats last_state
           res = "Result = " ++ showStkNode heap (hLookup heap addr)
 
 showState :: TiState -> String
-showState (stack, dump, heap, globals, stats) =
-    showStack heap stack ++ "\n"
+showState (stack, dump, heap, globals, stats) = showStack heap stack ++ "\n"
 
 showStack :: TiHeap -> TiStack -> String
 showStack heap stack = "Stk [" ++ pretty_stack ++ "]"
-    where
-      pretty_stack = concatMap show_stack_item stack
-      show_stack_item addr = "\n\t" ++ show addr ++ ": " ++
-                             showStkNode heap (hLookup heap addr)
+    where pretty_stack = concatMap show_stack_item stack
+          show_stack_item addr = "\n\t" ++ show addr ++ ": " ++ node addr
+          node addr = showStkNode heap (hLookup heap addr)
 
 showStkNode :: TiHeap -> Node -> String
 showStkNode heap (NAp fun_addr arg_addr) =
@@ -56,8 +54,7 @@ showStkNode heap (NAp fun_addr arg_addr) =
 showStkNode _ node = showNode node
 
 showNode :: Node -> String
-showNode (NAp a1 a2) =
-    "NAp " ++ show a1 ++ " " ++ show a2
+showNode (NAp a1 a2) = "NAp " ++ show a1 ++ " " ++ show a2
 showNode (NSupercomb name _ _) = "NSupercomb " ++ name
 showNode (NNum n) = "NNum " ++ show n
 
