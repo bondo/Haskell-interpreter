@@ -11,6 +11,7 @@ type TiHeap = Heap Node
 data Node = NAp Addr Addr
           | NSupercomb Name [Name] CoreExp
           | NNum Int
+          | NInd Addr
             deriving (Show)
 
 type TiGlobals = [(Name, Addr)]
@@ -57,6 +58,7 @@ showNode :: Node -> String
 showNode (NAp a1 a2) = "NAp " ++ show a1 ++ " " ++ show a2
 showNode (NSupercomb name _ _) = "NSupercomb " ++ name
 showNode (NNum n) = "NNum " ++ show n
+showNode (NInd a) = "NInd " ++ show a
 
 showStats :: TiState -> String
 showStats (_,_,_,_, stats) =

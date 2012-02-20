@@ -26,10 +26,11 @@ isDataNode (NNum _) = True
 isDataNode _        = False
 
 step :: TiState -> TiState
-step state@(stack, _, heap, _, _) = dispatch $ hLookup heap $ head stack
+step state@(a:as, d, heap, g, s) = dispatch $ hLookup heap a
     where dispatch (NNum n)                  = numStep state n
           dispatch (NAp a1 a2)               = apStep state a1 a2
           dispatch (NSupercomb sc args body) = scStep state sc args body
+          dispatch (NInd addr)               = (addr : as, d, heap, g, s)
 
 numStep :: TiState -> Int -> TiState
 numStep _ _ = error "number applied as a function"
@@ -39,11 +40,13 @@ apStep (s, d, h, g, st) a1 a2 = (a1 : s, d, h, g, st)
 
 scStep :: TiState -> Name -> [Name] -> CoreExp -> TiState
 scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
-    (new_stack, dump, new_heap, globals, stats)
-    where new_stack = result_addr : drop (length arg_names + 1) stack
-          (new_heap, result_addr) = instantiate body heap env
-          env = arg_bindings ++ globals
-          arg_bindings = zip arg_names $ getargs heap stack
+    (stack', dump, heap'', globals, stats)
+    where stack'                = result_addr : stack_tail
+          heap''                = hUpdate heap' ind_elem $ NInd result_addr
+          (heap', result_addr)  = instantiate body heap env
+          env                   = arg_bindings ++ globals
+          arg_bindings          = zip arg_names $ getargs heap stack
+          ind_elem : stack_tail = drop (length arg_names) stack
 
 getargs :: TiHeap -> TiStack -> [Addr]
 getargs heap (sc:stack) = map get_arg stack
