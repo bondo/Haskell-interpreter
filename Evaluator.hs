@@ -17,9 +17,9 @@ doAdmin :: TiState -> TiState
 doAdmin = applyToStats tiStatIncSteps
 
 tiFinal :: TiState -> Bool
-tiFinal ([sole_addr], _, heap, _, _) = isDataNode $ hLookup heap sole_addr
-tiFinal ([], _, _, _, _)             = error "empty stack!"
-tiFinal _                            = False
+tiFinal ([sole_addr], [], heap, _, _) = isDataNode $ hLookup heap sole_addr
+tiFinal ([], _, _, _, _)              = error "empty stack!"
+tiFinal _                             = False
 
 isDataNode :: Node -> Bool
 isDataNode (NNum _) = True
@@ -31,12 +31,18 @@ step state@(a:as, d, heap, g, s) = dispatch $ hLookup heap a
           dispatch (NAp a1 a2)               = apStep state a1 a2
           dispatch (NSupercomb sc args body) = scStep state sc args body
           dispatch (NInd addr)               = (addr : as, d, heap, g, s)
+          dispatch (NPrim name prim)         = primStep state prim
 
 numStep :: TiState -> Int -> TiState
+numStep ([_], stack:dump, heap, globals, stats) _ =
+    (stack, dump, heap, globals, stats)
 numStep _ _ = error "number applied as a function"
 
 apStep :: TiState -> Addr -> Addr -> TiState
-apStep (s, d, h, g, st) a1 a2 = (a1 : s, d, h, g, st)
+apStep (s@(a:_), d, h, g, st) a1 a2
+    | NInd a3 <- n2 = (s, d, hUpdate h a $ NAp a1 a3, g, st)
+    | otherwise     = (a1:s, d, h, g, st)
+    where n2 = hLookup h a2
 
 scStep :: TiState -> Name -> [Name] -> CoreExp -> TiState
 scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
@@ -48,9 +54,22 @@ scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
           arg_bindings          = zip arg_names $ getargs heap stack
           ind_elem : stack_tail = drop (length arg_names) stack
 
+primStep :: TiState -> Primitive -> TiState
+primStep state Neg = primNeg state
+
+primNeg :: TiState -> TiState
+primNeg state@(stack@[a,a1], dump, heap, env, stats)
+    | isDataNode node = ([b'], dump, hUpdate heap' a1 node', env, stats)
+    | otherwise       = ([b], [a1]:dump, heap, env, stats)
+    where NAp _ b     = hLookup heap a1
+          node        = hLookup heap b
+          (heap', b') = instantiate (ENum $ negate n) heap env
+          (NNum n)    = node
+          node'       = hLookup heap' b'
+
 getargs :: TiHeap -> TiStack -> [Addr]
 getargs heap (sc:stack) = map get_arg stack
-    where get_arg addr  = arg where (NAp fun arg) = hLookup heap addr
+    where get_arg addr = arg where (NAp fun arg) = hLookup heap addr
 
 instantiate :: CoreExp        -- Body of supercombinator
             -> TiHeap         -- Heap before instantiation

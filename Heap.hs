@@ -32,6 +32,6 @@ hNull = Addr 0
 hIsnull :: Addr -> Bool
 hIsnull (Addr a) = a == 0
 
-newtype Addr = Addr Int deriving (Eq)
+newtype Addr = Addr Int deriving (Eq, Ord)
 
 instance Show Addr where show (Addr a) = '#' : show a

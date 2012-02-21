@@ -35,6 +35,10 @@ testProgram6 = "f x = x ; main = let a = 42 in f a"
 
 testProgram7 = "id x = x ; main = twice twice twice id 3"
 
+testProgram8 = "main = negate 3"
+
+testProgram9 = "main = twice negate 3"
+
 testChurch = "succ = S (S (K S) K) ; \
              \add  = S I (K (S ((S (K S)) K))) ; \
              \mul  = S (K S) K ; \

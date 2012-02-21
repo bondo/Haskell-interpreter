@@ -3,16 +3,21 @@ module Utils where
 import Language
 import Heap
 
+import Data.List (sort)
+
 type TiState = (TiStack, TiDump, TiHeap, TiGlobals, TiStats)
 type TiStack = [Addr]
-data TiDump = DummyTiDump deriving (Show)
+type TiDump = [TiStack]
 type TiHeap = Heap Node
 
 data Node = NAp Addr Addr
           | NSupercomb Name [Name] CoreExp
           | NNum Int
           | NInd Addr
+          | NPrim Name Primitive
             deriving (Show)
+
+data Primitive = Neg | Add | Sub | Mul | Div deriving (Show, Eq)
 
 type TiGlobals = [(Name, Addr)]
 
@@ -27,7 +32,7 @@ tiStatGetSteps s = s
 applyToStats :: (TiStats -> TiStats) -> TiState -> TiState
 applyToStats f (s, d, h, g, st) = (s, d, h, g, f st)
 
-initialTiDump = DummyTiDump
+initialTiDump = []
 
 showResults :: [TiState] -> String
 showResults states = concatMap showState states ++ showStats (last states)
@@ -38,13 +43,27 @@ showResult states = res ++ showStats last_state
           res = "Result = " ++ showStkNode heap (hLookup heap addr)
 
 showState :: TiState -> String
-showState (stack, dump, heap, globals, stats) = showStack heap stack ++ "\n"
+showState (stack, dump, heap, globals, stats) =
+    prettyStack ++ "\n" ++ prettyDump ++ "\n" ++ prettyHeap ++ "\n\n"
+    where prettyStack = showStack heap stack
+          prettyDump  = showDump heap dump
+          prettyHeap  = showHeap heap
 
 showStack :: TiHeap -> TiStack -> String
-showStack heap stack = "Stk [" ++ pretty_stack ++ "]"
-    where pretty_stack = concatMap show_stack_item stack
-          show_stack_item addr = "\n\t" ++ show addr ++ ": " ++ node addr
-          node addr = showStkNode heap $ hLookup heap addr
+showStack heap stack = "Stk " ++ showAddrs heap stack
+
+showHeap :: TiHeap -> String
+showHeap heap = "Heap " ++ (showAddrs heap . sort . hAddresses $ heap)
+
+showDump :: TiHeap -> TiDump -> String
+showDump heap dump = "Dump [[ " ++ concatMap (showStack heap) dump ++ " ]]"
+
+showAddrs :: TiHeap -> [Addr] -> String
+showAddrs heap addrs     = "[" ++ pretty_addrs ++ "]"
+    where pretty_addrs   = concatMap show_item addrs
+          show_item addr = "\n\t" ++ show addr ++ ": " ++ node addr
+          node addr      = showStkNode heap $ hLookup heap addr
+
 
 showStkNode :: TiHeap -> Node -> String
 showStkNode heap (NAp fun_addr arg_addr) =
@@ -59,6 +78,7 @@ showNode (NAp a1 a2) = "NAp " ++ show a1 ++ " " ++ show a2
 showNode (NSupercomb name _ _) = "NSupercomb " ++ name
 showNode (NNum n) = "NNum " ++ show n
 showNode (NInd a) = "NInd " ++ show a
+showNode (NPrim n p) = "NPrim " ++ n
 
 showStats :: TiState -> String
 showStats (_,_,_,_, stats) =
