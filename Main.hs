@@ -16,7 +16,7 @@ testProgram2 = "f = 3 ;\n\
                        \; <2> -> 5 \n\
                        \}"
 
-testProgram3 = "main = S K K 3" -- main = 3
+testProgram3 = "main = S K K 42"
 
 testProgram4 = "\
 \pair x y f = f x y ; \n\
@@ -27,17 +27,23 @@ testProgram4 = "\
 \            b = pair y a \n\
 \        in \n\
 \        fst (snd (snd (snd a))) ; \n\
-\main = f 3 4" -- main = 4
+\main = f 3 42"
 
 testProgram5 = "main = let rec a = 101 in 42"
 
 testProgram6 = "f x = x ; main = let a = 42 in f a"
 
-testProgram7 = "id x = x ; main = twice twice twice id 3"
+testProgram7 = "id x = x ; main = twice twice twice id 42"
 
-testProgram8 = "main = negate 3"
+testProgram8 = "main = negate -42"
 
-testProgram9 = "main = twice negate 3"
+testProgram9 = "main = twice negate 42"
+
+testProgram10 = "main = mul 7 6"
+
+testProgram11 = "main = plus (negate 10) 52"
+
+testProgram12 = "main = minus 46 (div 8 2)"
 
 testChurch = "succ = S (S (K S) K) ; \
              \add  = S I (K (S ((S (K S)) K))) ; \

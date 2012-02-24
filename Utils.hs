@@ -3,7 +3,7 @@ module Utils where
 import Language
 import Heap
 
-import Data.List (sort)
+import Data.List (sort, intercalate)
 
 type TiState = (TiStack, TiDump, TiHeap, TiGlobals, TiStats)
 type TiStack = [Addr]
@@ -56,7 +56,7 @@ showHeap :: TiHeap -> String
 showHeap heap = "Heap " ++ (showAddrs heap . sort . hAddresses $ heap)
 
 showDump :: TiHeap -> TiDump -> String
-showDump heap dump = "Dump [[ " ++ concatMap (showStack heap) dump ++ " ]]"
+showDump heap dump = "Dump [[ " ++ intercalate "\n  " (map (showStack heap) dump) ++ " ]]"
 
 showAddrs :: TiHeap -> [Addr] -> String
 showAddrs heap addrs     = "[" ++ pretty_addrs ++ "]"

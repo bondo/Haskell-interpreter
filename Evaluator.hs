@@ -56,6 +56,10 @@ scStep (stack, dump, heap, globals, stats) sc_name arg_names body =
 
 primStep :: TiState -> Primitive -> TiState
 primStep state Neg = primNeg state
+primStep state Add = primArith state (+)
+primStep state Sub = primArith state (-)
+primStep state Mul = primArith state (*)
+primStep state Div = primArith state div
 
 primNeg :: TiState -> TiState
 primNeg state@(stack@[a,a1], dump, heap, env, stats)
@@ -66,6 +70,19 @@ primNeg state@(stack@[a,a1], dump, heap, env, stats)
           (heap', b') = instantiate (ENum $ negate n) heap env
           (NNum n)    = node
           node'       = hLookup heap' b'
+
+primArith :: TiState -> (Int -> Int -> Int) -> TiState
+primArith state@(stack@[a,a1,a2], dump, heap, env, stats) op
+    | bothIsData = ([b'], dump, hUpdate heap' a2 n', env, stats)
+    | otherwise  = ([b2], [b1]:[a,a1,a2]:dump, heap, env, stats)
+    where NAp _ b1               = hLookup heap a1
+          NAp _ b2               = hLookup heap a2
+          n1                     = hLookup heap b1
+          n2                     = hLookup heap b2
+          (NNum num1, NNum num2) = (n1, n2)
+          bothIsData             = isDataNode n1 && isDataNode n2
+          (heap', b')            = instantiate (ENum $ op num1 num2) heap env
+          n'                     = hLookup heap' b'
 
 getargs :: TiHeap -> TiStack -> [Addr]
 getargs heap (sc:stack) = map get_arg stack
