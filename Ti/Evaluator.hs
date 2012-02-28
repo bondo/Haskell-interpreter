@@ -1,10 +1,10 @@
-module Evaluator (eval) where
+module Ti.Evaluator (eval) where
 
 import Heap
-import Utils
 import Language
 import AssocList
-import GarbageCollector
+import Ti.Utils
+import Ti.GarbageCollector
 
 import Data.List
 

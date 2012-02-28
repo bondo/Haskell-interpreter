@@ -3,9 +3,9 @@ module Main where
 import Language
 import Pretty
 import Parser
-import Compiler
-import Utils
-import Evaluator
+import Ti.Compiler
+import Ti.Utils
+import Ti.Evaluator
 
 testProgram = "test arg1 arg2 = arg1 arg2"
 

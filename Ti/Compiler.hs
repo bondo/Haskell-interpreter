@@ -1,9 +1,9 @@
-module Compiler (compile) where
+module Ti.Compiler (compile) where
 
-import Utils
 import Language
 import AssocList
 import Heap
+import Ti.Utils
 
 import Data.List (mapAccumL)
 

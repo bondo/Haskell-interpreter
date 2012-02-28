@@ -1,4 +1,4 @@
-module Utils where
+module Ti.Utils where
 
 import Language
 import Heap

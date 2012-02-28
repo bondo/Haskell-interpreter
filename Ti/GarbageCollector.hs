@@ -1,6 +1,6 @@
-module GarbageCollector (gc) where
+module Ti.GarbageCollector (gc) where
 
-import Utils
+import Ti.Utils
 import Heap
 
 import Data.List (foldl')
