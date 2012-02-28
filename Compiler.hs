@@ -1,4 +1,4 @@
-module Compiler where
+module Compiler (compile) where
 
 import Utils
 import Language

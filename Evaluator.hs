@@ -1,4 +1,4 @@
-module Evaluator where
+module Evaluator (eval) where
 
 import Heap
 import Utils

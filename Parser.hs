@@ -73,7 +73,7 @@ pNum = liftM ENum int
 
 pLet :: Parser CoreExp
 pLet = do reserved "let"
-          isRec <- try (reserved "rec" >> return True) <|> return False
+          isRec <- (reserved "rec" >> return True) <|> return False
           defs <- pDefs
           reserved "in"
           exp <- pExp
