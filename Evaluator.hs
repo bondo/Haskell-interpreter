@@ -4,6 +4,7 @@ import Heap
 import Utils
 import Language
 import AssocList
+import GarbageCollector
 
 import Data.List
 
@@ -14,7 +15,8 @@ eval state = state : rest_states
           next_state  = doAdmin (step state)
 
 doAdmin :: TiState -> TiState
-doAdmin = applyToStats tiStatIncSteps
+doAdmin state@(_,_, heap, _,_) = applyToStats updates $ gc state
+    where updates = tiStatIncSteps . tiStatUpdateHeapSize heap
 
 tiFinal :: TiState -> Bool
 tiFinal ([sole_addr], [], heap, _, _) = isDataNode $ hLookup heap sole_addr

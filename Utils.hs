@@ -16,6 +16,7 @@ data Node = NAp Addr Addr
           | NInd Addr
           | NPrim Name Primitive
           | NData Int [Addr]
+          | NMarked Node
             deriving (Show)
 
 data Primitive = Neg | Add | Sub | Mul | Div
@@ -25,13 +26,19 @@ data Primitive = Neg | Add | Sub | Mul | Div
 
 type TiGlobals = [(Name, Addr)]
 
-type TiStats = Int
+data TiStats = TiStats { steps :: Int
+                       , maxHeapSize :: Int
+                       }
 tiStatInitial :: TiStats
-tiStatInitial = 0
+tiStatInitial = TiStats 0 0
 tiStatIncSteps :: TiStats -> TiStats
-tiStatIncSteps s = s + 1
+tiStatIncSteps s = s { steps = steps s + 1 }
+tiStatUpdateHeapSize :: TiHeap -> TiStats -> TiStats
+tiStatUpdateHeapSize h s = s { maxHeapSize = max (maxHeapSize s) (hSize h) }
 tiStatGetSteps :: TiStats -> Int
-tiStatGetSteps s = s
+tiStatGetSteps = steps
+tiStatGetMaxHeapSize :: TiStats -> Int
+tiStatGetMaxHeapSize = maxHeapSize
 
 applyToStats :: (TiStats -> TiStats) -> TiState -> TiState
 applyToStats f (s, d, h, g, st) = (s, d, h, g, f st)
@@ -88,4 +95,5 @@ showNode (NData tag _) = "NData " ++ show tag ++ " [...]"
 
 showStats :: TiState -> String
 showStats (_,_,_,_, stats) =
-    "\nTotal number of steps = " ++ show (tiStatGetSteps stats)
+    "\nTotal number of steps = " ++ show (steps stats) ++
+    "\nMaximal heap size = " ++ show (maxHeapSize stats)
