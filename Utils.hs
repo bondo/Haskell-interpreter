@@ -15,9 +15,13 @@ data Node = NAp Addr Addr
           | NNum Int
           | NInd Addr
           | NPrim Name Primitive
+          | NData Int [Addr]
             deriving (Show)
 
-data Primitive = Neg | Add | Sub | Mul | Div deriving (Show, Eq)
+data Primitive = Neg | Add | Sub | Mul | Div
+               | Gt | Geq | Lt | Leq | Eq | Neq
+               | PrimConstr | If
+                 deriving (Show, Eq)
 
 type TiGlobals = [(Name, Addr)]
 
@@ -53,7 +57,8 @@ showStack :: TiHeap -> TiStack -> String
 showStack heap stack = "Stk " ++ showAddrs heap stack
 
 showHeap :: TiHeap -> String
-showHeap heap = "Heap " ++ (showAddrs heap . sort . hAddresses $ heap)
+showHeap heap = "Heap " ++ shortDesc -- (showAddrs heap . sort . hAddresses $ heap)
+    where shortDesc = "[" ++ (show . length $ hAddresses heap) ++ " elements]"
 
 showDump :: TiHeap -> TiDump -> String
 showDump heap dump = "Dump [[ " ++ intercalate "\n  " (map (showStack heap) dump) ++ " ]]"
@@ -79,6 +84,7 @@ showNode (NSupercomb name _ _) = "NSupercomb " ++ name
 showNode (NNum n) = "NNum " ++ show n
 showNode (NInd a) = "NInd " ++ show a
 showNode (NPrim n p) = "NPrim " ++ n
+showNode (NData tag _) = "NData " ++ show tag ++ " [...]"
 
 showStats :: TiState -> String
 showStats (_,_,_,_, stats) =

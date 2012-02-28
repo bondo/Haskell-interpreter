@@ -4,11 +4,12 @@ module Parser (parseCore) where
 -- haskell
 
 import Language
+import Lexer
 
 import Text.Parsec
 import Text.Parsec.String -- has a parseFromFile
 import qualified Text.Parsec.Token as P
-import Text.Parsec.Language (haskell)
+--import Text.Parsec.Language (haskell)
 
 import Control.Monad
 

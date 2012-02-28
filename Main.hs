@@ -45,17 +45,7 @@ testProgram11 = "main = plus (negate 10) 52"
 
 testProgram12 = "main = minus 46 (div 8 2)"
 
-testChurch = "succ = S (S (K S) K) ; \
-             \add  = S I (K (S ((S (K S)) K))) ; \
-             \mul  = S (K S) K ; \
-             \pow  = I ; \
-             \ch0  = I ; \
-             \ch1  = succ ch0 ; \
-             \ch2  = succ ch1 ; \
-             \ch3  = succ ch2 ; \
-             \ch4  = succ ch3 ; \
-             \ch5  = succ ch4 ; \
-             \main = add ch1 ch2"
+testProgram13 = "fac n = if (eq n 0) 1 (mul n (fac (minus n 1))) ; main = plus (fac 4) 18"
 
 -- parse and pretty-print
 papp = putStrLn . either show (show . pretty) . parseCore

@@ -31,4 +31,7 @@ allocatePrim heap (name, prim) = (heap', (name, addr))
 primitives :: [(Name, Primitive)]
 primitives = [("negate", Neg),
               ("plus", Add), ("minus", Sub),
-              ("mul", Mul), ("div", Div)]
+              ("mul", Mul), ("div", Div),
+              ("gt", Gt), ("geq", Geq), ("lt", Lt), ("leq", Leq) ,
+              ("eq", Eq), ("neq", Neq),
+              ("if", If)]

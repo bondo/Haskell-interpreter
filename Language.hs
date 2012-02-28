@@ -49,4 +49,5 @@ preludeDefs =
                            (EVar "f")) ]
 
 extraPreludeDefs :: CoreProgram
-extraPreludeDefs = []
+extraPreludeDefs =
+    [ ("False", [], EConstr 0 0), ("True", [], EConstr 1 0) ]
