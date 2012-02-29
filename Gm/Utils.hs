@@ -42,11 +42,11 @@ statGetSteps :: GmStats -> Int
 statGetSteps s = s
 
 showResults :: [GmState] -> String
-showResults states = "Supercombinator definitions\n\n" ++ scs ++ "\n\nState transitions\n\n" ++ sts ++ end
+showResults states@(s:_) = "Supercombinator definitions\n\n" ++ scs ++ "\n\n" ++
+                           "State transitions\n\n" ++ sts ++ "\n\n" ++
+                           showStats (last states)
     where scs = intercalate "\n" $ map (showSC s) (gmGlobals s)
           sts = intercalate "\n" $ map showState states
-          end = "\n\n" ++ showStats (last states)
-          s:_ = states
 
 showSC :: GmState -> (Name, Addr) -> String
 showSC s (name, addr) = "Code for " ++ name ++ ":\n" ++ showInstructions code
@@ -58,7 +58,9 @@ showInstructions is = "  " ++ intercalate "\n  " (map show is) ++ "\n"
 showState :: GmState -> String
 showState s = showStack s ++ "\n" ++ showInstructions (gmCode s) ++ "\n"
 
-showStack s = "Stack:[" ++ intercalate "\n       " (map (showStackItem s) . reverse $ gmStack s) ++ "]"
+showStack :: GmState -> String
+showStack s = "Stack:[" ++ intercalate "\n       " items ++ "]"
+    where items = map (showStackItem s) . reverse $ gmStack s
 
 showStackItem :: GmState -> Addr -> String
 showStackItem s a = show a ++ ": " ++ showNode s a (hLookup (gmHeap s) a)
@@ -67,6 +69,7 @@ showStackItem s a = show a ++ ": " ++ showNode s a (hLookup (gmHeap s) a)
 showNode :: GmState -> Addr -> Node -> String
 showNode s a (NNum n) = show n
 showNode s a (NGlobal n g) = "Global " ++ show (head [n | (n,b) <- gmGlobals s, a==b])
+   -- Alternative: "Global " ++ show (fst . head . filter ((==a) . snd) $ gmGlobals s)
 showNode s a (NAp a1 a2) = "Ap " ++ show a1 ++ " " ++ show a2
 
 showStats :: GmState -> String
