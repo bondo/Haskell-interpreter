@@ -3,9 +3,9 @@ module Main where
 import Language
 import Pretty
 import Parser
-import Ti.Compiler
-import Ti.Utils
-import Ti.Evaluator
+import Gm.Compiler
+import Gm.Utils
+import Gm.Evaluator
 
 testProgram = "test arg1 arg2 = arg1 arg2"
 
@@ -56,6 +56,6 @@ pae = eval . make . parseCore
 
 trace = putStrLn . showResults . pae
 
-run = putStrLn . showResult . pae
+--run = putStrLn . showResult . pae
 
 main = papp testProgram
